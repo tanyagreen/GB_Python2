@@ -3,6 +3,7 @@
 
 import os
 import hashlib
+from collections import OrderedDict
 
 
 def get_hash_sum(byte, mode):
@@ -21,48 +22,47 @@ def get_hash_sum(byte, mode):
     return h.hexdigest()
 
 
-def glue_file(dir_name, hash_file_name, res_file_name):
+def glue_file(dir_name, hash_file, res_file):
     """
     функцию "склеивания" файла на основе упорядоченных хэш-сумм
 
     На входе: имя директории с файлами-кусочками, имя файла с хэш-суммами, имя выходного файла
     На выходе: размер полученного файла 
+
     """
-
-    DIR = os.path.join('files', dir_name)
     
-    with open(os.path.join(DIR, hash_file_name), 'r', encoding='UTF-8') as f:
-        lst_hashes = [line.replace('\n', '') for line in f]
-
-    list_files = [file_name for file_name in os.listdir(DIR)
-              if not file_name == hash_file_name]
-    res_lst = []
+    dir_name_in = os.path.join('files', dir_name)
+    hash_file_path = os.path.join(dir_name_in, hash_file)
+    res_file_path = os.path.join('files', res_file)
+    
+    list_files = [file_name for file_name in os.listdir(dir_name_in)
+              if not file_name == hash_file]
+    
+    hash_summ = {}
+    with open(hash_file_path, 'r') as f:
+        hash_summ = OrderedDict(map(lambda line: (line.replace('\n', ''), ''), f))
     
     for file in list_files:
-        with open(os.path.join(DIR, file), 'rb') as f:
-            read_data = f.read()
-            h_summ = get_hash_sum(read_data, 'md5')
-   
-        for i, item in enumerate(lst_hashes):
-            if h_summ == item:
-                print('{} + {}'.format(h_summ, i))
-                res_lst.insert(i, file)
+        with open(os.path.join(dir_name_in, file), 'rb') as f:
+            data = f.read()
+        h = get_hash_sum(data, 'md5')
+        hash_summ[h] = file
+    
+    with open(res_file_path, 'wb') as f_result:
+        for hash, file in hash_summ.items():
+            with open(os.path.join(dir_name_in, file), 'rb') as f:
+                data = f.read()
+            f_result.write(data)
 
-    with open(os.path.join('files', res_file_name), 'wb') as f_res:
-        for file in res_lst:
-            with open(os.path.join(DIR, file), 'rb') as f:
-                read_data = f.read()
-            f_res.write(read_data)
-            
-    return os.path.getsize(os.path.join('files', res_file_name))
-
+    return os.path.getsize(res_file_path)    
+  
 
 def main():   
     """
     main func 
     """
 
-    print(glue_file('file2','parts.md5', 'resss2'))
+    print(glue_file('file2','parts.md5', 'resss3'))
 
 
 if __name__ == '__main__':
