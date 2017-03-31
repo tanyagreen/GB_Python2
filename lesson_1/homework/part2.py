@@ -1,9 +1,6 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import hashlib
 import os
-import pickle
+
 
 __author__ = "Tatiana Karavaeva"
 

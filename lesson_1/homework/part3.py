@@ -1,10 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 import hashlib
 from collections import OrderedDict
 
+__author__ = "Tatiana Karavaeva"
 
 def get_hash_sum(byte, mode):
     """На входе: посдедовательность байт, название алгоритма хэш-суммы
@@ -55,14 +53,26 @@ def glue_file(dir_name, hash_file, res_file):
             f_result.write(data)
 
     return os.path.getsize(res_file_path)    
-  
+
+
+def cut_file(file_name, size):
+    """
+    функцию разбиения файла на кусочки указанной длины.
+
+    На входе: имя исходного файла и размер в байтах для разрезания файла
+    На выходе: количество полученных файлов-фрагментов
+    """
+
+    pass
+
+    
 
 def main():   
     """
     main func 
     """
 
-    print(glue_file('file2','parts.md5', 'resss3'))
+    print(glue_file('file1','parts.md5', 'resss'))
 
 
 if __name__ == '__main__':
